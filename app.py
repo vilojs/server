@@ -1,10 +1,14 @@
+# server.py
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import g4f
 from g4f.client import Client
 import requests
+import os
 
 app = Flask(__name__)
+
+# Configure CORS to allow specific origins
 CORS(app, resources={r"/*": {"origins": "*"}})
 client = Client()
 
@@ -14,15 +18,13 @@ def analyze_image_url():
     try:
         data = request.get_json()
         image_url = data.get('url')
-        prompt = data.get('prompt', 'What are on this image?')  # Default prompt if none provided
+        prompt = data.get('prompt', 'What are on this image?')
         
         if not image_url:
             return jsonify({'error': 'No URL provided'}), 400
             
-        # Get image from URL
         remote_image = requests.get(image_url, stream=True).content
         
-        # Analyze with g4f using custom prompt
         response = client.chat.completions.create(
             model=g4f.models.blackboxai_pro,
             messages=[{"role": "user", "content": prompt}],
@@ -44,9 +46,8 @@ def analyze_image_upload():
             
         image_file = request.files['image']
         image_data = image_file.read()
-        prompt = request.form.get('prompt', 'What are on this image?')  # Default prompt if none provided
+        prompt = request.form.get('prompt', 'What are on this image?')
         
-        # Analyze with g4f using custom prompt
         response = client.chat.completions.create(
             model=g4f.models.blackboxai_pro,
             messages=[{"role": "user", "content": prompt}],
