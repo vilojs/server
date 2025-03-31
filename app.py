@@ -5,7 +5,7 @@ from g4f.client import Client
 import requests
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app, resources={r"/*": {"origins": "*"}})
 client = Client()
 
 # Route for processing image from URL
