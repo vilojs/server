@@ -60,4 +60,7 @@ def analyze_image_upload():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # Use environment variable PORT if available (for Railway), default to 5000 locally
+    port = int(os.environ.get('PORT', 5000))
+    # Bind to 0.0.0.0 for external access
+    app.run(host='0.0.0.0', port=port, debug=True)
